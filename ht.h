@@ -353,6 +353,10 @@ void HashTable<K,V,Prober,Hash,KEqual>::insert(const ItemType& p)
 	{
 		resize();
 	}
+	else if (loadFactor >= 1)
+	{
+		throw std::logic_error("Full");
+	}
 
 	HASH_INDEX_T temp = probe(p.first);
 	while(table_[temp] != nullptr && !KEqual()(p.first, table_[temp]->item.first))
@@ -363,6 +367,8 @@ void HashTable<K,V,Prober,Hash,KEqual>::insert(const ItemType& p)
 	if(table_[temp] != nullptr)
 	{
 		table_[temp]->item.second = p.second;
+		keyAmount--;
+		removedKeys--;
 	}
 	else
 	{
